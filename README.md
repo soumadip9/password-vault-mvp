@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🔐 Password Vault + Password Generator (MVP)
 
-## Getting Started
+A secure, privacy-first password manager built with Next.js, TypeScript, and MongoDB.
+Users can generate, store, search, edit, and delete passwords — all encrypted client-side to ensure no plaintext data ever leaves the browser.
 
-First, run the development server:
+🚀 Live Demo
 
-```bash
+👉 https://password-vault-mvp-avrj-git-main-soumadip-ghoshs-projects.vercel.app/
+
+⚙️ Tech Stack
+
+Frontend: Next.js (App Router) + TypeScript + Tailwind CSS
+
+Backend: Next.js API Routes
+
+Database: MongoDB Atlas
+
+Authentication: Iron Session
+
+Encryption: AES (CryptoJS)
+
+🧠 Features
+
+✅ Password generator (length, symbols, numbers, etc.)
+✅ Client-side AES encryption (no plaintext stored)
+✅ Simple authentication (email + password)
+✅ Vault: add / edit / delete / search
+✅ Copy to clipboard with auto-clear (15s)
+✅ Responsive, minimalist UI
+✅ Each user accesses only their own vault
+
+🛠️ Local Setup
+1️⃣ Clone the Repository
+git clone https://github.com/<your-username>/password-vault-mvp.git
+cd password-vault-mvp
+
+2️⃣ Install Dependencies
+npm install
+
+3️⃣ Configure Environment Variables
+
+Create a .env.local file in the project root:
+
+MONGODB_URI=your_mongodb_connection_string
+SESSION_PASSWORD=your_iron_session_secret
+NEXT_PUBLIC_CRYPTO_SECRET=your_crypto_secret
+
+
+⚠️ Use strong 32-character random strings for SESSION_PASSWORD and NEXT_PUBLIC_CRYPTO_SECRET.
+
+4️⃣ Run the App
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+🎥 Demo Flow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Sign up or log in
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Generate a strong password
 
-## Deploy on Vercel
+Save it to your vault
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Search, edit, or delete entries
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Copy password → auto-clears after 15 seconds
+
+👨‍💻 Author: Piku
+🌐 Hosting: Vercel
+🗄️ Database: MongoDB Atlas
+🔐 Encryption: AES (CryptoJS)
+
+
+🔒 Encryption Note
+
+This project uses AES (Advanced Encryption Standard) via CryptoJS for client-side encryption of all vault data.
+Only encrypted ciphertext is stored in MongoDB — ensuring zero plaintext exposure and end-to-end privacy.
