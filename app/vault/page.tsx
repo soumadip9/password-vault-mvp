@@ -1,5 +1,4 @@
 "use client";
-export const runtime = "nodejs";
 
 import { useEffect, useState } from "react";
 import VaultForm from "@/components/VaultForm";
@@ -61,7 +60,6 @@ export default function VaultPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this entry?")) return;
-
     await fetch(`/api/vault?id=${id}`, { method: "DELETE" });
     setVaultItems((prev) => prev.filter((item) => item._id !== id));
   };
@@ -120,28 +118,51 @@ export default function VaultPage() {
       ) : (
         <div className="space-y-4">
           {filteredItems.map((item) => (
-            <div key={item._id} className="p-4 border rounded-lg bg-gray-50 shadow-sm">
+            <div
+              key={item._id}
+              className="p-4 border rounded-lg bg-gray-50 shadow-sm"
+            >
               {editingItem?._id === item._id ? (
                 <>
                   <input
                     className="border p-2 rounded w-full mb-2"
                     value={editingItem.title}
-                    onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        title: e.target.value,
+                      })
+                    }
                   />
                   <input
                     className="border p-2 rounded w-full mb-2"
                     value={editingItem.username}
-                    onChange={(e) => setEditingItem({ ...editingItem, username: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        username: e.target.value,
+                      })
+                    }
                   />
                   <input
                     className="border p-2 rounded w-full mb-2"
                     value={editingItem.password}
-                    onChange={(e) => setEditingItem({ ...editingItem, password: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        password: e.target.value,
+                      })
+                    }
                   />
                   <textarea
                     className="border p-2 rounded w-full mb-2"
                     value={editingItem.notes}
-                    onChange={(e) => setEditingItem({ ...editingItem, notes: e.target.value })}
+                    onChange={(e) =>
+                      setEditingItem({
+                        ...editingItem,
+                        notes: e.target.value,
+                      })
+                    }
                   />
                   <div className="flex gap-2">
                     <button
