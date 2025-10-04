@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { ObjectId } from "mongodb";
 
@@ -51,13 +51,21 @@ export async function PUT(req: Request) {
 }
 
 // ✅ Delete vault item
-export async function DELETE(req: Request) {
+
+
+export async function DELETE(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
+    const { id } = await req.json();
+
+    // ✅ Ensure id is valid before converting
+    if (!id) {
+      return NextResponse.json({ success: false, error: "Missing ID" }, { status: 400 });
+    }
 
     const db = await getDb();
-    const result = await db.collection("vaultItems").deleteOne({ _id: new ObjectId(id) });
+    const result = await db
+      .collection("vaultItems")
+      .deleteOne({ _id: new ObjectId(String(id)) }); // 👈 convert safely to string
 
     return NextResponse.json({ success: true, deletedCount: result.deletedCount });
   } catch (error) {
@@ -65,3 +73,4 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: false, error: "Server error" }, { status: 500 });
   }
 }
+
