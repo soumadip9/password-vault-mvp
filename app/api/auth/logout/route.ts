@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getIronSession } from "iron-session";
 import { sessionOptions } from "@/lib/session";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+
 
 export async function POST(req: NextRequest) {
   const res = new NextResponse(null, { status: 302, headers: { Location: "/" } });

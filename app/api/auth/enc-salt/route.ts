@@ -4,7 +4,8 @@ import { getIronSession } from "iron-session";
 import { sessionOptions } from "@/lib/session";
 import { ObjectId } from "mongodb";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+
 
 export async function GET(req: NextRequest) {
   const res = new NextResponse();
