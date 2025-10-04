@@ -6,6 +6,6 @@ export interface VaultItem {
   url?: string;
   password: string;
   notes?: string;
-  userEmail?: string; // ✅ made optional to prevent build errors
+  userEmail?: ""; // ✅ made optional to prevent build errors
   createdAt?: string;
 }
