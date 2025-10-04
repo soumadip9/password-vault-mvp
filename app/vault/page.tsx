@@ -5,15 +5,15 @@ import VaultForm from "@/components/VaultForm";
 import { decrypt, encrypt } from "@/lib/crypto";
 
 interface VaultItem {
-  _id?: string;               // some optimistic items may not have _id yet
+  _id?: string;
   title: string;
   username: string;
-  url?: string;               // ✅ NEW: URL field
-  password: string;           // decrypted in UI
-  notes: string;
-  userEmail: string;
-  createdAt: string;
+  password: string;
+  notes?: string;
+  userEmail?: string; // 👈 make this optional to match the other file
+  createdAt?: string;
 }
+
 
 export default function VaultPage() {
   const [vaultItems, setVaultItems] = useState<VaultItem[]>([]);
