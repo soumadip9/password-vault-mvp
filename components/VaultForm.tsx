@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { encrypt } from "@/lib/crypto";
 import PasswordGenerator from "@/components/PasswordGenerator";
-import { VaultItem } from "@/types/VaultItem"; // ✅ shared type
+import { VaultItem } from "@/types/VaultItems";
+ // ✅ shared type
 
 export default function VaultForm({
   onItemAdded,

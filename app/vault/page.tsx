@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import VaultForm from "@/components/VaultForm";
 import { decrypt, encrypt } from "@/lib/crypto";
-import { VaultItem } from "@/types/VaultItem"; // ✅ shared type
+import { VaultItem } from "@/types/VaultItems";
 
 export default function VaultPage() {
   const [vaultItems, setVaultItems] = useState<VaultItem[]>([]);
