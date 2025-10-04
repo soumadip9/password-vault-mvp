@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { getIronSession } from "iron-session/edge";
+import { getIronSession } from "iron-session";
 import { sessionOptions } from "@/lib/session";
 import { ObjectId } from "mongodb";
 
