@@ -12,7 +12,7 @@ type VaultItem = {
   url?: string;
   password: string;
   notes: string;
-  userEmail?: string;
+  userEmail: string;
   createdAt?: string;
 };
 
