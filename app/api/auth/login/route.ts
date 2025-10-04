@@ -1,9 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { getIronSession } from "iron-session";
 import { sessionOptions } from "@/lib/session";
-
 
 
 export async function POST(req: NextRequest) {
