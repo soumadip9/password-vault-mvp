@@ -73,8 +73,3 @@ Copy password → auto-clears after 15 seconds
 🗄️ Database: MongoDB Atlas
 🔐 Encryption: AES (CryptoJS)
 
-
-🔒 Encryption Note
-
-This project uses AES (Advanced Encryption Standard) via CryptoJS for client-side encryption of all vault data.
-Only encrypted ciphertext is stored in MongoDB — ensuring zero plaintext exposure and end-to-end privacy.
