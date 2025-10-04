@@ -50,11 +50,12 @@ export async function deriveKey(password: string, saltB64: string) {
   );
 }
 
-export async function encryptJson<T>(data: T, key: CryptoKey): Promise<EncBlob> {
+export async function encryptJson(data: any, key: CryptoKey): Promise<EncBlob> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, str2buf(JSON.stringify(data)));
-  return { iv: buf2b64(iv), ct: buf2b64(ct) };
+  return { iv: buf2b64(iv.buffer), ct: buf2b64(ct) }; // ✅ FIXED
 }
+
 
 export async function decryptJson<T>(blob: EncBlob, key: CryptoKey): Promise<T> {
   const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b642buf(blob.iv) }, key, b642buf(blob.ct));
