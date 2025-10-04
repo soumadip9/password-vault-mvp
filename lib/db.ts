@@ -1,15 +1,23 @@
+// /lib/db.ts
 import { MongoClient, Db, ObjectId } from "mongodb";
 
-const uri = process.env.MONGODB_URI!;
-let client: MongoClient;
-let db: Db;
+const uri: string = process.env.MONGODB_URI!;  // ✅ assert defined
+const dbName = process.env.MONGODB_DB || "vaultDB";
 
-export async function getDb() {
+let client: MongoClient | null = null;
+let db: Db | null = null;
+
+export async function getDb(): Promise<Db> {
+  if (!uri) throw new Error("❌ MONGODB_URI is not defined in .env.local");
+
+  if (db) return db;
+
   if (!client) {
-    client = new MongoClient(uri);
+    client = new MongoClient(uri); // ✅ no TS error anymore
     await client.connect();
-    db = client.db();
   }
+
+  db = client.db(dbName);
   return db;
 }
 
