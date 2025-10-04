@@ -43,7 +43,13 @@ export default function VaultPage() {
     setVaultItems((prev) => [newItem, ...prev]);
   };
 
-  // ✅ Copy password to clipboard (auto clear after 15s)
+  // ✅ Logout function
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/";
+  };
+
+  // ✅ Copy password (auto clear after 15s)
   const handleCopy = async (password: string, id: string) => {
     try {
       await navigator.clipboard.writeText(password);
@@ -94,6 +100,7 @@ export default function VaultPage() {
     setEditingItem(null);
   };
 
+  // ✅ Filter by title / username / URL
   const filteredItems = vaultItems.filter((item) => {
     const q = searchTerm.toLowerCase();
     return (
@@ -105,9 +112,16 @@ export default function VaultPage() {
 
   return (
     <div className="max-w-5xl mx-auto py-10 px-6">
-      <h1 className="text-4xl font-bold text-center mb-10 text-blue-700">
-        🔒 Your Vault
-      </h1>
+      {/* ✅ Header with Logout */}
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-4xl font-bold text-blue-700">🔒 Your Vault</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* ✅ Vault Form */}
       <VaultForm onItemAdded={handleItemAdded} />
@@ -206,7 +220,9 @@ export default function VaultPage() {
                         Delete
                       </button>
                       <button
-                        onClick={() => handleCopy(item.password, item._id ?? item.title)}
+                        onClick={() =>
+                          handleCopy(item.password, item._id ?? item.title)
+                        }
                         className={`text-sm px-3 py-1 rounded-lg ${
                           copiedId === (item._id ?? item.title)
                             ? "bg-green-600 text-white"
