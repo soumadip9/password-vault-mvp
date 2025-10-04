@@ -3,17 +3,7 @@
 import { useEffect, useState } from "react";
 import VaultForm from "@/components/VaultForm";
 import { decrypt, encrypt } from "@/lib/crypto";
-
-interface VaultItem {
-  _id?: string;
-  title: string;
-  username: string;
-  password: string;
-  notes?: string;
-  userEmail: string; 
-  createdAt?: string;
-}
-
+import { VaultItem } from "@/types/VaultItem"; // ✅ shared type
 
 export default function VaultPage() {
   const [vaultItems, setVaultItems] = useState<VaultItem[]>([]);
@@ -22,7 +12,7 @@ export default function VaultPage() {
   const [editingItem, setEditingItem] = useState<VaultItem | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch vault items from backend
+  // ✅ Fetch vault items for current user
   const fetchVaultItems = async () => {
     try {
       const res = await fetch("/api/vault");
@@ -48,33 +38,31 @@ export default function VaultPage() {
     fetchVaultItems();
   }, []);
 
-  // Add new vault item (from <VaultForm/>)
-  const handleItemAdded = (newItem: Omit<VaultItem, "userEmail"> & { userEmail?: string }) => {
-  setVaultItems((prev) => [newItem as VaultItem, ...prev]);
-};
+  // ✅ When new item is added
+  const handleItemAdded = (newItem: VaultItem) => {
+    setVaultItems((prev) => [newItem, ...prev]);
+  };
 
-
-  // Copy password to clipboard and auto-clear after 15s (safely)
+  // ✅ Copy password to clipboard (auto clear after 15s)
   const handleCopy = async (password: string, id: string) => {
     try {
       await navigator.clipboard.writeText(password);
       setCopiedId(id);
+
       setTimeout(async () => {
         try {
-          if (document.hasFocus()) {
-            await navigator.clipboard.writeText("");
-          }
-        } catch (error) {
-          console.warn("⚠️ Could not clear clipboard:", error);
+          if (document.hasFocus()) await navigator.clipboard.writeText("");
+        } catch (err) {
+          console.warn("⚠️ Could not clear clipboard:", err);
         }
         setCopiedId(null);
       }, 15000);
     } catch (err) {
-      console.error("❌ Failed to copy password:", err);
+      console.error("❌ Clipboard error:", err);
     }
   };
 
-  // Delete a vault item
+  // ✅ Delete vault item
   const handleDelete = async (id?: string) => {
     if (!id) return;
     if (!confirm("Are you sure you want to delete this entry?")) return;
@@ -82,18 +70,16 @@ export default function VaultPage() {
     setVaultItems((prev) => prev.filter((item) => item._id !== id));
   };
 
-  // Enter edit mode
-  const handleEdit = (item: VaultItem) => {
-    setEditingItem(item);
-  };
+  // ✅ Edit vault item
+  const handleEdit = (item: VaultItem) => setEditingItem(item);
 
-  // Save edits
+  // ✅ Save updated item
   const handleUpdate = async () => {
     if (!editingItem) return;
 
     const payload = {
       ...editingItem,
-      password: encrypt(editingItem.password), // encrypt before sending
+      password: encrypt(editingItem.password),
     };
 
     await fetch("/api/vault", {
@@ -108,7 +94,6 @@ export default function VaultPage() {
     setEditingItem(null);
   };
 
-  // Search by title/username/url
   const filteredItems = vaultItems.filter((item) => {
     const q = searchTerm.toLowerCase();
     return (
@@ -124,18 +109,18 @@ export default function VaultPage() {
         🔒 Your Vault
       </h1>
 
+      {/* ✅ Vault Form */}
       <VaultForm onItemAdded={handleItemAdded} />
 
+      {/* ✅ Saved Vault Entries */}
       <div className="flex justify-between items-center mt-12 mb-4">
-        {/* ✅ Heading in WHITE as requested */}
         <h2 className="text-2xl font-semibold text-white">Saved Vault Entries</h2>
-
         <input
           type="text"
           placeholder="Search title / username / URL..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-400 p-2 rounded-lg w-1/2 text-sm"
+          className="border border-gray-400 p-2 rounded-lg w-1/2 text-sm placeholder-white"
         />
       </div>
 
@@ -152,7 +137,6 @@ export default function VaultPage() {
             >
               {editingItem && editingItem._id === item._id ? (
                 <>
-                  {/* Title */}
                   <input
                     className="border border-gray-400 p-2 rounded w-full mb-3 text-black"
                     value={editingItem.title || ""}
@@ -160,8 +144,6 @@ export default function VaultPage() {
                       setEditingItem({ ...editingItem, title: e.target.value })
                     }
                   />
-
-                  {/* Username */}
                   <input
                     className="border border-gray-400 p-2 rounded w-full mb-3 text-black"
                     value={editingItem.username || ""}
@@ -169,8 +151,6 @@ export default function VaultPage() {
                       setEditingItem({ ...editingItem, username: e.target.value })
                     }
                   />
-
-                  {/* ✅ URL (new) */}
                   <input
                     className="border border-gray-400 p-2 rounded w-full mb-3 text-black"
                     placeholder="https://example.com"
@@ -179,8 +159,6 @@ export default function VaultPage() {
                       setEditingItem({ ...editingItem, url: e.target.value })
                     }
                   />
-
-                  {/* Password (decrypted in UI) */}
                   <input
                     className="border border-gray-400 p-2 rounded w-full mb-3 text-black"
                     value={editingItem.password || ""}
@@ -188,8 +166,6 @@ export default function VaultPage() {
                       setEditingItem({ ...editingItem, password: e.target.value })
                     }
                   />
-
-                  {/* Notes */}
                   <textarea
                     className="border border-gray-400 p-2 rounded w-full mb-3 text-black"
                     value={editingItem.notes || ""}
@@ -197,7 +173,6 @@ export default function VaultPage() {
                       setEditingItem({ ...editingItem, notes: e.target.value })
                     }
                   />
-
                   <div className="flex gap-3 justify-end">
                     <button
                       onClick={handleUpdate}
@@ -238,17 +213,16 @@ export default function VaultPage() {
                             : "bg-gray-800 text-white hover:bg-gray-700"
                         }`}
                       >
-                        {copiedId === (item._id ?? item.title) ? "Copied ✅" : "Copy"}
+                        {copiedId === (item._id ?? item.title)
+                          ? "Copied ✅"
+                          : "Copy"}
                       </button>
                     </div>
                   </div>
 
-                  {/* Username */}
                   <p className="text-sm text-black mt-2">
                     <strong>Username:</strong> {item.username}
                   </p>
-
-                  {/* ✅ URL (new) */}
                   {item.url && (
                     <p className="text-sm text-black mt-2">
                       <strong>URL:</strong>{" "}
@@ -262,13 +236,9 @@ export default function VaultPage() {
                       </a>
                     </p>
                   )}
-
-                  {/* Masked password */}
                   <p className="text-sm font-mono text-black mt-2">
                     <strong>Password:</strong> ••••••••
                   </p>
-
-                  {/* Notes */}
                   {item.notes && (
                     <p className="text-sm italic text-black mt-2">
                       <strong>Notes:</strong> {item.notes}
