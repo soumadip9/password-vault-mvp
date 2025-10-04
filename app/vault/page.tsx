@@ -10,7 +10,7 @@ interface VaultItem {
   username: string;
   password: string;
   notes?: string;
-  userEmail?: string; // 👈 make this optional to match the other file
+  userEmail: string; 
   createdAt?: string;
 }
 
@@ -49,9 +49,10 @@ export default function VaultPage() {
   }, []);
 
   // Add new vault item (from <VaultForm/>)
-  const handleItemAdded = (newItem: VaultItem) => {
-    setVaultItems((prev) => [newItem, ...prev]);
-  };
+  const handleItemAdded = (newItem: Omit<VaultItem, "userEmail"> & { userEmail?: string }) => {
+  setVaultItems((prev) => [newItem as VaultItem, ...prev]);
+};
+
 
   // Copy password to clipboard and auto-clear after 15s (safely)
   const handleCopy = async (password: string, id: string) => {
