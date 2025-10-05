@@ -12,10 +12,17 @@ export default function VaultPage() {
   const [editingItem, setEditingItem] = useState<VaultItem | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // ✅ Fetch vault items for current user
+  // ✅ Fetch vault items securely for the logged-in user
   const fetchVaultItems = async () => {
     try {
-      const res = await fetch("/api/vault");
+      const res = await fetch("/api/vault", { credentials: "include" }); // ✅ Include session cookies
+
+      if (res.status === 401) {
+        // Unauthorized → redirect to login
+        window.location.href = "/";
+        return;
+      }
+
       const data = await res.json();
 
       if (data.items && data.items.length > 0) {
@@ -43,13 +50,20 @@ export default function VaultPage() {
     setVaultItems((prev) => [newItem, ...prev]);
   };
 
-  // ✅ Logout function
+  // ✅ Logout user and redirect
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/";
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include", // ✅ Important to clear session
+      });
+      window.location.href = "/";
+    } catch (err) {
+      console.error("❌ Logout failed:", err);
+    }
   };
 
-  // ✅ Copy password (auto clear after 15s)
+  // ✅ Copy password to clipboard (auto-clear after 15s)
   const handleCopy = async (password: string, id: string) => {
     try {
       await navigator.clipboard.writeText(password);
@@ -68,18 +82,22 @@ export default function VaultPage() {
     }
   };
 
-  // ✅ Delete vault item
+  // ✅ Delete vault entry
   const handleDelete = async (id?: string) => {
     if (!id) return;
     if (!confirm("Are you sure you want to delete this entry?")) return;
-    await fetch(`/api/vault?id=${id}`, { method: "DELETE" });
+
+    await fetch(`/api/vault?id=${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
     setVaultItems((prev) => prev.filter((item) => item._id !== id));
   };
 
-  // ✅ Edit vault item
+  // ✅ Edit and update
   const handleEdit = (item: VaultItem) => setEditingItem(item);
 
-  // ✅ Save updated item
   const handleUpdate = async () => {
     if (!editingItem) return;
 
@@ -91,6 +109,7 @@ export default function VaultPage() {
     await fetch("/api/vault", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify(payload),
     });
 
@@ -100,7 +119,7 @@ export default function VaultPage() {
     setEditingItem(null);
   };
 
-  // ✅ Filter by title / username / URL
+  // ✅ Filter vault entries
   const filteredItems = vaultItems.filter((item) => {
     const q = searchTerm.toLowerCase();
     return (
@@ -128,20 +147,22 @@ export default function VaultPage() {
 
       {/* ✅ Saved Vault Entries */}
       <div className="flex justify-between items-center mt-12 mb-4">
-        <h2 className="text-2xl font-semibold text-white">Saved Vault Entries</h2>
+        <h2 className="text-2xl font-semibold text-white">
+          Saved Vault Entries
+        </h2>
         <input
           type="text"
           placeholder="Search title / username / URL..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-400 p-2 rounded-lg w-1/2 text-sm placeholder-white"
+          className="border border-gray-400 p-2 rounded-lg w-1/2 text-sm placeholder-white bg-transparent text-white"
         />
       </div>
 
       {loading ? (
-        <p className="text-center text-gray-600">Loading...</p>
+        <p className="text-center text-gray-400">Loading...</p>
       ) : filteredItems.length === 0 ? (
-        <p className="text-center text-gray-600">No entries found.</p>
+        <p className="text-center text-gray-400">No entries found.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredItems.map((item) => (
