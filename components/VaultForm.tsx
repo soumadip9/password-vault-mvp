@@ -21,47 +21,64 @@ export default function VaultForm({
   const handlePasswordGenerated = (generated: string) => {
     setPassword(generated);
   };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setSaving(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+  try {
+    const encryptedPassword = encrypt(password);
 
-    try {
-      const encryptedPassword = encrypt(password);
-      const payload = { title, username, url: url || undefined, password: encryptedPassword, notes };
+    const payload = {
+      title,
+      username,
+      url: url || undefined,
+      password: encryptedPassword,
+      notes,
+    };
 
-      const res = await fetch("/api/vault", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    console.log("📤 Submitting new vault item:", payload); // ✅ add this
 
-      const data = await res.json();
+    const res = await fetch("/api/vault", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-      if (res.ok) {
-        const newItem: VaultItem = {
-          _id: data.id,
-          title,
-          username,
-          url,
-          password,
-          notes,
-          createdAt: new Date().toISOString(),
-        };
-        onItemAdded(newItem);
-        setTitle("");
-        setUsername("");
-        setUrl("");
-        setPassword("");
-        setNotes("");
-      } else alert(data?.error || "❌ Failed to save vault entry.");
-    } catch (error) {
-      console.error("❌ Error saving vault entry:", error);
-    } finally {
-      setSaving(false);
+    console.log("📥 Server response:", res.status); // ✅ add this
+    const data = await res.json();
+    console.log("📥 Response body:", data); // ✅ add this
+
+    if (res.ok) {
+      const newItem: VaultItem = {
+        _id: data.id,
+        title,
+        username,
+        url,
+        password, // decrypted for UI
+        notes,
+        createdAt: new Date().toISOString(),
+      };
+
+      onItemAdded(newItem);
+
+      // Reset form
+      setTitle("");
+      setUsername("");
+      setUrl("");
+      setPassword("");
+      setNotes("");
+    } else {
+      alert(data?.error || "❌ Failed to save vault entry.");
     }
-  };
+  } catch (error) {
+    console.error("❌ Error saving vault entry:", error);
+    alert("❌ Error saving vault entry. Check console.");
+  } finally {
+    setSaving(false);
+  }
+};
 
+  
   return (
     <form
       onSubmit={handleSubmit}
