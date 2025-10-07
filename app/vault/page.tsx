@@ -179,13 +179,17 @@ export default function VaultPage() {
                       setEditingItem({ ...editingItem, title: e.target.value })
                     }
                   />
-                  <input
-                    className="border border-gray-400 p-2 rounded w-full mb-3 text-black"
-                    value={editingItem.username || ""}
-                    onChange={(e) =>
-                      setEditingItem({ ...editingItem, username: e.target.value })
-                    }
-                  />
+                 <div className="relative">
+  <input
+    type="password"
+    className="border border-gray-400 p-2 rounded w-full mb-3 text-black pr-10"
+    value={editingItem.password || ""}
+    onChange={(e) =>
+      setEditingItem({ ...editingItem, password: e.target.value })
+    }
+  />
+</div>
+
                   <input
                     className="border border-gray-400 p-2 rounded w-full mb-3 text-black"
                     placeholder="https://example.com"
