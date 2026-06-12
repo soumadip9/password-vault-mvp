@@ -1,3 +1,4 @@
+// MongoDB connection singleton — requires MONGODB_URI and optional MONGODB_DB in .env.local
 // /lib/db.ts
 import { MongoClient, Db, ObjectId } from "mongodb";
 
