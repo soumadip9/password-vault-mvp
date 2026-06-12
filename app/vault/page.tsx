@@ -9,6 +9,7 @@ export default function VaultPage() {
   const [vaultItems, setVaultItems] = useState<VaultItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [revealedId, setRevealedId] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<VaultItem | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -80,6 +81,11 @@ export default function VaultPage() {
     } catch (err) {
       console.error("❌ Clipboard error:", err);
     }
+  };
+
+  // ✅ Toggle password visibility on a card
+  const handleReveal = (id: string) => {
+    setRevealedId((prev) => (prev === id ? null : id));
   };
 
   // ✅ Delete vault entry
@@ -231,7 +237,7 @@ export default function VaultPage() {
                 <>
                   <div className="flex justify-between items-center">
                     <h3 className="font-bold text-xl text-black">{item.title}</h3>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-sm bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600"
@@ -258,6 +264,16 @@ export default function VaultPage() {
                           ? "Copied ✅"
                           : "Copy"}
                       </button>
+                      <button
+                        onClick={() =>
+                          handleReveal(item._id ?? item.title)
+                        }
+                        className="text-sm bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
+                      >
+                        {revealedId === (item._id ?? item.title)
+                          ? "Hide"
+                          : "Reveal"}
+                      </button>
                     </div>
                   </div>
 
@@ -277,8 +293,11 @@ export default function VaultPage() {
                       </a>
                     </p>
                   )}
-                  <p className="text-sm font-mono text-black mt-2">
-                    <strong>Password:</strong> ••••••••
+                  <p className="text-sm font-mono text-black mt-2 break-all">
+                    <strong>Password:</strong>{" "}
+                    {revealedId === (item._id ?? item.title)
+                      ? item.password
+                      : "••••••••"}
                   </p>
                   {item.notes && (
                     <p className="text-sm italic text-black mt-2">
